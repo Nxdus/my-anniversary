@@ -1,101 +1,172 @@
-import Image from "next/image";
+"use client"
+
+import React, { useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { XIcon } from "lucide-react";
+import AutoScrollingGallery from "./components/grid-image";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const paragraphs = [
+    "สวัสดีครับ... อันนี้ใครหรอครับ ?",
+    "คุณใช่แฟนของผมรึป่าว ?",
+    "ถ้าคุณคือฟ้าใสตัวจริง...",
+    "รบกวนตอบคำถามต่อไปนี้ด้วยครับ...",
+    "รบกวนช่วยบอกวันที่ที่เราคบกันทีครับ...",
+    "ผมสูงเท่าไหร่ ?",
+    "สรรพนามที่เราใช้เรียกกันคือ ?",
+    "ผมใส่แว่นหรือไม่ ?",
+    "คุณผ่านจนมาถึงด่านสุดท้ายแล้วคำถามสุดท้ายนี้จะทำให้ผมมั่นใจได้ว่าคุณคือแฟนของผม...",
+    "ผมชอบอะไรในตัวคุณ ?",
+    "ฮ่าาา มะกี้เค้าหยอกเล่น บิบิตอบอะไรก็ได้ทั้งหมดนั่นแหละค่ะ",
+    "สวัสดีนะคะแฟนของเค้าวันนี้วันอะไรเอ่ย ??",
+    "ตอนนี้ครบรอบ 1 ปี แล้วนะคะที่เค้าได้รัก บิบิ",
+    "ที่ผ่านมาบิบิทำให้เค้ามีความสุขม้ากม้าก หวังว่าตอนนี้บิบิก็คงกำลังมีความสุขอยู่ นะคะ",
+    "เค้ารักบิบินะคะ ❤️"
+  ]
+
+  const questions = {
+    [4]: [
+      ["19 กุมภาพันธ์ 2024", true],
+      ["1 มกราคม 2024", false],
+      ["24 มีนาคม 2024", false]
+    ],
+    [5]: [
+      ["181 เซนติเมตร", false],
+      ["180 เซนติเมตร", false],
+      ["183 เซนติเมตร", true],
+    ],
+    [6]: [
+      ["ตัวเอง", false],
+      ["บิบิ", true],
+      ["เธอ", false]
+    ],
+    [7]: [
+      ["ใส่", true],
+      ["ไม่ใส่", false]
+    ],
+    [9]: [
+      ["หน้าตา รูปลักษณ์ภายนอก", true],
+      ["น่มน้ม ิิ", true],
+      ["แจ้มบิบิ", true]
+    ]
+  }
+
+  const [index, setIndex] = useState(0);
+  const [isFading, setIsFading] = useState(false);
+  const [isWrong, setIsWrong] = useState(false)
+
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  const handleClick = () => {
+
+    if (audioRef.current) {
+      audioRef.current.play().catch((error) => {
+        console.error("ไม่สามารถเล่นเสียงได้:", error);
+      });
+    }
+
+    if (index in questions) return
+
+    if (index > 15) return
+
+    setIsFading(true);
+    setTimeout(() => {
+      setIndex((prevIndex) => (prevIndex + 1));
+      setIsFading(false);
+    }, 500);
+  }
+
+  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>, state: boolean) => {
+    e.preventDefault();
+    if (state) {
+      setIsFading(true);
+      setTimeout(() => {
+        setIndex((prevIndex) => (prevIndex + 1));
+        setIsFading(false);
+      }, 500);
+
+      return
+    }
+
+    setIsWrong(true)
+  }
+
+  return (
+    <main onClick={handleClick} className="relative w-screen h-dvh bg-[url(/paper-texture.jpg)] bg-cover bg-center flex flex-col justify-center items-center gap-6 p-3">
+
+      <audio ref={audioRef} loop hidden>
+        <source src="/audio/sound.mp3" type="audio/mpeg" />
+      </audio>
+
+      {index < 15 && (
+        <motion.img
+          alt=""
+          src={'/dog-flower.png'}
+          width={256}
+          height={256}
+          className={`absolute bottom-0 right-4 sm:w-1/3 lg:w-52 transition-opacity duration-300 ease-in-out ${questions[index as keyof typeof questions] == null ? 'opacity-100' : 'opacity-0'}`}
+          initial={{ x: 0 }}
+          animate={{
+            x: [0, 10, -10, 0],
+          }}
+          transition={{
+            duration: 7,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+      )}
+
+      <p className={`text-2xl md:text-6xl text-[rgba(144,99,48,0.85)] text-center drop-shadow-md
+      transition-opacity duration-500 ease-in-out ${isFading ? 'opacity-0' : 'opacity-100'}`}>
+        {paragraphs[index]}
+      </p>
+
+      {questions[index as keyof typeof questions] ? questions[index as keyof typeof questions].map((question, questionIndex) => (
+        <div key={questionIndex} className={`flex flex-row justify-center w-full items-center gap-3 px-20 transition-opacity duration-500 ease-in-out ${isFading ? 'opacity-0' : 'opacity-100'}`}>
+          <button className="z-10 bg-[#F9F7F0] w-full  py-2 rounded-full border-2 border-[#4a4947] justify-center items-center gap-2.5 inline-flex" onClick={(e) => { handleSubmit(e, question[1] as boolean) }}> {question[0]} </button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      )) : null}
+
+      {isWrong && <div className={`w-full h-52 flex justify-center items-center absolute px-6`}>
+        <div className={`w-full h-full rounded-2xl drop-shadow-2xl bg-white border-b-4 border`}>
+          <div className="w-full h-full flex justify-center items-center gap-2">
+            <motion.img
+              alt=""
+              src={'/cat-angry.png'}
+              width={256}
+              height={256}
+              className="w-1/3"
+              initial={{ y: 0, x: 0, opacity: 1 }}
+              animate={{
+                x: [0, 10, 0],
+                y: [0, 5, 0]
+              }}
+              transition={{
+                duration: .7,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            />
+            <p className="text-center text-red-700 px-2 font-medium"> ไออ้วนตอบคำถามของเค้าผิดได้ไง หื้อออ !!! โกดแล่ว</p>
+          </div>
+          <button className="border-2 rounded-full absolute top-2 right-[10%]" onClick={() => { setIsWrong(!isWrong) }}><XIcon className="font-bold" /></button>
+        </div>
+      </div>}
+
+      <div className={`z-0 absolute flex justify-center items-center flex-col gap-4 transition-opacity duration-300 ease-in-out ${index == 15 ? 'opacity-100' : 'opacity-0'}`}>
+        <img src="/car-flower.png" alt="gib flower" className="w-2/4" />
+        <p className="text-4xl  text-[rgba(144,99,48,0.85)]">เค้าให้ 🫶🏻</p>
+        <p className="text-[rgba(144,99,48,0.85)]">กดต่อไปเพื่อดูรูปน่ารักของบิบิ 💗</p>
+      </div>
+
+      {index == 16 && (
+        <div className="flex flex-wrap justify-center items-center gap-12">
+          <AutoScrollingGallery />
+          <button className="absolute z-2 bg-[#F9F7F0] px-2 py-1 rounded-full border-2 border-[#4a4947] bottom-5"> นี่คือรูปเกือบทั้งหมดของบิบิในระยะเวลา 1 ปี ❗️ </button>
+        </div>
+      )}
+    </main>
   );
 }
